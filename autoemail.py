@@ -3,15 +3,21 @@ import email.utils
 import config
 
 def enviar_email(assunto, msg):
+    remetentes = config.ENDERECO_EMAIL
     try:
-        server = smtplib.SMTP('smtp.gmail.com:587')
-        server.ehlo()
-        server.starttls()
-        server.login(config.ENDERECO_EMAIL, config.SENHA)
-        message = 'Subject: {}\n\n{}'.format(assunto, msg)
-        server.sendmail(config.ENDERECO_EMAIL, config.ENDERECO_EMAIL, message)
-        server.quit()
-        print("Sucesso: Email sent!")
+        decisao = input("Deseja alterar para qual emails será enviado essa mensagem?\nAtual: {}".format(remetentes))
+        if decisao == 's':
+            remetentes = input("Insira os emails separados por ', ' (virgula e espaço): \n").split(', ')
+        for remetente in remetentes:
+            server = smtplib.SMTP('smtp.gmail.com:587')
+            server.ehlo()
+            server.starttls()
+            server.login(config.ENDERECO_EMAIL, config.SENHA)           
+            message = 'Assunto: {}\n\n{}'.format(assunto, msg)        
+            server.sendmail(config.ENDERECO_EMAIL, remetente, message)
+            server.quit()
+        
+        print("Sucesso: Email enviado!")
     except:
         print('Error, something failed')
         
